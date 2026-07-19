@@ -1,9 +1,14 @@
 const https = require("https");
+const path = require("path");
 
 const { initializeApp, cert } = require("firebase-admin/app");
 const { getDatabase } = require("firebase-admin/database");
 
-const serviceAccount = require("./serviceAccountKey.json");
+const serviceAccount = require(
+  process.env.RENDER
+    ? "/etc/secrets/serviceAccountKey.json"
+    : path.join(__dirname, "serviceAccountKey.json")
+);
 
 initializeApp({
   credential: cert(serviceAccount),
@@ -21,7 +26,7 @@ let lastStatus = "";
 function kirimNotif(data) {
 
   const pesan =
-`Status : ${data.status}
+    `Status : ${data.status}
 
 Suhu : ${Number(data.suhu).toFixed(1)} °C
 pH : ${Number(data.ph).toFixed(1)}
@@ -62,16 +67,16 @@ db.ref("monitoring").on("value", (snapshot) => {
   if (!data) return;
 
   if (data.status !== "AMAN" &&
-      data.status !== lastStatus) {
+    data.status !== lastStatus) {
 
-      kirimNotif(data);
+    kirimNotif(data);
 
-      lastStatus = data.status;
+    lastStatus = data.status;
   }
 
   if (data.status === "AMAN") {
 
-      lastStatus = "";
+    lastStatus = "";
 
   }
 
