@@ -1,8 +1,21 @@
 const https = require("https");
 const path = require("path");
+const express = require("express");
 
 const { initializeApp, cert } = require("firebase-admin/app");
 const { getDatabase } = require("firebase-admin/database");
+
+const app = express();
+
+const PORT = process.env.PORT || 8080;
+
+app.get("/", (req, res) => {
+  res.send("Firebase Listener Running");
+});
+
+app.listen(PORT, () => {
+  console.log(`Server berjalan di port ${PORT}`);
+});
 
 const serviceAccount = require(
   process.env.RENDER
